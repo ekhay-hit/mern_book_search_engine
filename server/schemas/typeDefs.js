@@ -25,6 +25,8 @@ user(id: ID!):User
 }
 
 type Mutation{
+signUp(name: String!, email: String!, password: String!): Auth
+login(email: String!, password: String!): Auth
 
 
 }
