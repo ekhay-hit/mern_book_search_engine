@@ -1,5 +1,7 @@
 const typeDefs = `
-
+type Query{
+me: User
+}
 type Book {
 authors: String
 description: String

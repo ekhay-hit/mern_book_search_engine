@@ -4,11 +4,31 @@ const { signToken, AuthenticationError } = require("../utils/auth");
 //start resolvers
 // Resolver is layer that connect API call or graphql to database
 const resolvers = {
-  // all get request inside Query
+  // all get request inside
+
   Query: {
     // returning all the books
-    books: async () => {
-      return await Books.find({});
+    // books: async () => {
+    // return await Books.find({});
+    // },
+    me: async (_, _, { user }) => {
+      // if no user return eror no user login
+      if (!user) {
+        throw new Error("Not authenticated");
+      }
+      // else try to find the authenticated user base on its id
+      try {
+        const currentUser = await User.findById(user._id);
+        // if cannot find it by id return the message
+        if (!currentUser) {
+          throw new Error("User not found");
+        }
+
+        // if success retun the auth user
+        return currentUser;
+      } catch (err) {
+        throw new Error("Faild to get user");
+      }
     },
 
     // return book by its id
