@@ -31,8 +31,9 @@ user(id: ID!):User
 type Mutation{
 addUser(userName: String!, email: String!, password: String!): Auth
 loginUser(email: String!, password: String!): Auth
-
+saveBook:(userId:ID!, book:BookInput!):User
 }
+deleteBook:(userId:ID!, bookId:ID!):User
 
 
 `;
