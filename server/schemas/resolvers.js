@@ -20,7 +20,7 @@ const resolvers = {
 Mutation:{
 
      // Login mutation
-   login: async(_,{email, password})=>{
+   loginUser: async(_,{email, password})=>{
      const profile = User.findOne({email});
      if(!profile){
          // return res.status(404).json("No profile found");
@@ -32,13 +32,13 @@ Mutation:{
          throw AuthenticationError;
          
      }
-     // const token = signToken(profile)
-     // return {token, profile};
-     return profile;
+     const token = signToken(profile)
+     return {token, profile};
+    //  return profile;
    }
 
    // Singup Mutation
-   signUp: async (parent, {name,email, password})=>{
+ addUser: async (parent, {name,email, password})=>{
         const user = await User.create({name,email, password});
        const token = signToken(user);
        return {token, profile}
