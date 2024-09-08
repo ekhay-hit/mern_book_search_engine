@@ -5,7 +5,7 @@ export const QUERY_SINGLE_USER = gql`
   query singleUser($singleId: ID!) {
     users(userId: $profileId) {
       _id
-      name
+      userName
     }
   }
 `;
