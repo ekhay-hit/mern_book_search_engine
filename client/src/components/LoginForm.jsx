@@ -2,19 +2,22 @@
 import { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 
-import { loginUser } from "../utils/API";
+// import { loginUser } from "../utils/API";
 import Auth from "../utils/auth";
 
 //import useQuery form apollo/client
-import { useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 // import the quiries or mutation from utils queries.js mutation.js;
-import { QUERY_SINGLE_USER } from "../utils/queries";
-
+// import { QUERY_SINGLE_USER } from "../utils/queries";
+// import LoginUser mutation
+import { LOGIN_USER } from "../utils/mutations";
 const LoginForm = () => {
-  const { loading, data } = useQuery(QUERY_SINGLE_USER);
+  // const { loading, data } = useQuery(QUERY_SINGLE_USER);
   const [userFormData, setUserFormData] = useState({ email: "", password: "" });
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+
+  const [loginUser, { error, data }] = useMutation(LOGIN_USER);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -32,16 +35,19 @@ const LoginForm = () => {
     }
 
     try {
-      const response = await loginUser(userFormData);
+      const { data } = await loginUser({ variables: { ...userFormData } });
 
-      if (!response.ok) {
-        throw new Error("something went wrong!");
-      }
+      // if (error) {
+      // throw new Error("something went wrong!");
+      // }
 
-      const { token, user } = await response.json();
-      console.log(user);
-      Auth.login(token);
+      // const { token, user } = await response.json();
+      console.log("This is the user that logs in");
+      console.log(data.loginUser);
+      Auth.login(data.loginUser.token);
     } catch (err) {
+      console.log(userFormData);
+      console.log("I am here at the catch");
       console.error(err);
       setShowAlert(true);
     }

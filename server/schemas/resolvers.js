@@ -11,7 +11,7 @@ const resolvers = {
     // books: async () => {
     // return await Books.find({});
     // },
-    me: async (_, _, { user }) => {
+    me: async (parent, _, { user }) => {
       // if no user return eror no user login
       if (!user) {
         throw new Error("Not authenticated");
@@ -40,26 +40,35 @@ const resolvers = {
   Mutation: {
     // Login mutation
     loginUser: async (_, { email, password }) => {
-      const profile = User.findOne({ email });
-      if (!profile) {
+      const user = await User.findOne({ email });
+      if (!user) {
         // return res.status(404).json("No profile found");
-        throw AuthenticationError;
+        throw new AuthenticationError("No profile found");
       }
-      const passwordIsValid = await profile.isCorrectPassword(password);
+      const passwordIsValid = await user.isCorrectPassword(password);
       if (!passwordIsValid) {
         // throw new Error("Password is not valid");
-        throw AuthenticationError;
+        throw new AuthenticationError("Invalid password");
       }
-      const token = signToken(profile);
-      return { token, profile };
+      const token = signToken(user);
+      return { token, user };
       //  return profile;
     },
 
     // Singup Mutation
-    addUser: async (parent, { name, email, password }) => {
-      const user = await User.create({ name, email, password });
-      const token = signToken(user);
-      return { token, profile };
+    addUser: async (_, { username, email, password }) => {
+      console.log("I am in mutation");
+      console.log(username);
+      console.log(email);
+      console.log(password);
+      try {
+        const user = await User.create({ username, email, password });
+        const token = signToken(user);
+        return { token, user };
+      } catch (err) {
+        console.error("Error creating the new user", err);
+        throw new Error(`Error creating user: ${err.message}`);
+      }
     },
 
     // save book mutation
