@@ -5,9 +5,18 @@ import { Container, Card, Button, Row, Col } from "react-bootstrap";
 import Auth from "../utils/auth";
 import { removeBookId } from "../utils/localStorage";
 
+import { useMutation, useQuery } from "@apollo/client";
+// import { SAVE_BOOK } from "../utils/mutations";
+import { DELETE_BOOK } from "../utils/mutations";
+// import { QUERY_SINGLE_USER } from "../utils/queries";
+
+// const [saveBook, { error }] = useMutation(SAVE_BOOK);
+
 const SavedBooks = () => {
   const [userData, setUserData] = useState({});
 
+  // const [getMe, { error }] = useQuery(QUERY_SINGLE_USER);
+  const [deleteBook, { error }] = useMutation(DELETE_BOOK);
   // use this to determine if `useEffect()` hook needs to run again
   const userDataLength = Object.keys(userData).length;
 
@@ -83,8 +92,8 @@ const SavedBooks = () => {
         <Row>
           {userData.savedBooks.map((book) => {
             return (
-              <Col md="4">
-                <Card key={book.bookId} border="dark">
+              <Col key={book.bookId} md="4">
+                <Card border="dark">
                   {book.image ? (
                     <Card.Img
                       src={book.image}
