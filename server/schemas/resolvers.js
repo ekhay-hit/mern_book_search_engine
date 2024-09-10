@@ -72,38 +72,42 @@ const resolvers = {
     },
 
     // save book mutation
-    saveBook: async (_, { userId, book }) => {
+    saveBook: async (_, { book }, context) => {
       try {
-        const updatedUser = await User.findOneAndUpdate(
-          { _id: userId },
-          { $addToSet: { savedBooks: book } },
-          { new: true, runValidators: true }
-        );
-        if (!updatedUser) {
-          throw new Error("user with request id not found");
+        if (context.user) {
+          const updatedUser = await User.findByIdAndUpdate(
+            { _id: context.user._id },
+            { $addToSet: { savedBooks: book } },
+            { new: true, runValidators: true }
+          );
+          if (!updatedUser) {
+            throw new Error("user with request id not found");
+          }
+          return updatedUser;
         }
-        return updatedUser;
       } catch (err) {
         throw new Error("Failed to save the book");
       }
     },
 
     // Delete book mutation
-    deleteBook: async (_, { userId, params }) => {
+    deleteBook: async (_, { params }, context) => {
       try {
-        const updatedUser = await User.findOneAndDelete(
-          // the user id that we need to find
-          { _id: userId },
-          // pull the book from that array to delete it
-          { $pull: { savedBooks: { bookId: params.bookId } } },
-          // return the new
-          { new: true }
-        );
+        if (context.user) {
+          const updatedUser = await User.findOneAndDelete(
+            // the user id that we need to find
+            { _id: context.user._id },
+            // pull the book from that array to delete it
+            { $pull: { savedBooks: { bookId: params.bookId } } },
+            // return the new
+            { new: true }
+          );
 
-        if (!updatedUser) {
-          throw new Error("User not found");
+          if (!updatedUser) {
+            throw new Error("User not found");
+          }
+          return updatedUser;
         }
-        return updatedUser;
       } catch (err) {
         throw new Error("Failed to delete the book");
       }

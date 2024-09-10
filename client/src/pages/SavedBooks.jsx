@@ -8,42 +8,43 @@ import { removeBookId } from "../utils/localStorage";
 import { useMutation, useQuery } from "@apollo/client";
 // import { SAVE_BOOK } from "../utils/mutations";
 import { DELETE_BOOK } from "../utils/mutations";
-// import { QUERY_SINGLE_USER } from "../utils/queries";
+import { GET_ME } from "../utils/queries";
 
 // const [saveBook, { error }] = useMutation(SAVE_BOOK);
 
 const SavedBooks = () => {
   const [userData, setUserData] = useState({});
 
-  // const [getMe, { error }] = useQuery(QUERY_SINGLE_USER);
+  const { loading, data } = useQuery(GET_ME);
   const [deleteBook, { error }] = useMutation(DELETE_BOOK);
   // use this to determine if `useEffect()` hook needs to run again
   const userDataLength = Object.keys(userData).length;
+  const userDataBook = data?.me || {};
+  console.log(userDataBook);
+  // useEffect(() => {
+  // const getUserData = async () => {
+  // try {
+  // const token = Auth.loggedIn() ? Auth.getToken() : null;
 
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        const token = Auth.loggedIn() ? Auth.getToken() : null;
+  // if (!token) {
+  // return false;
+  // }
 
-        if (!token) {
-          return false;
-        }
+  // const response = await getMe(token);
 
-        const response = await getMe(token);
+  // if (!response.ok) {
+  // throw new Error("something went wrong!");
+  // }
 
-        if (!response.ok) {
-          throw new Error("something went wrong!");
-        }
+  // const user = await response.json();
+  // setUserData(user);
+  // } catch (err) {
+  // console.error(err);
+  // }
+  // };
 
-        const user = await response.json();
-        setUserData(user);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    getUserData();
-  }, [userDataLength]);
+  // getUserData();
+  // }, [userDataLength]);
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
@@ -83,14 +84,14 @@ const SavedBooks = () => {
       </div>
       <Container>
         <h2 className="pt-5">
-          {userData.savedBooks.length
-            ? `Viewing ${userData.savedBooks.length} saved ${
-                userData.savedBooks.length === 1 ? "book" : "books"
+          {userDataBook.savedBooks.length
+            ? `Viewing ${userDataBook.savedBooks.length} saved ${
+                userDataBook.savedBooks.length === 1 ? "book" : "books"
               }:`
             : "You have no saved books!"}
         </h2>
         <Row>
-          {userData.savedBooks.map((book) => {
+          {userDataBook.savedBooks.map((book) => {
             return (
               <Col key={book.bookId} md="4">
                 <Card border="dark">
