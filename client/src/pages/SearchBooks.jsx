@@ -75,7 +75,7 @@ const SearchBooks = () => {
 
     try {
       const response = await saveBook({
-        varaibles: { book: bookToSave },
+        variables: { book: bookToSave },
         context: {
           headers: {
             authorization: `Bearer ${token}`,
