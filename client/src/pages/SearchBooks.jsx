@@ -74,7 +74,16 @@ const SearchBooks = () => {
     }
 
     try {
-      const response = await saveBook(bookToSave, token);
+      const response = await saveBook({
+        varaibles: { book: bookToSave },
+        context: {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+      });
+
+      console.log("response", response);
 
       if (!response.ok) {
         throw new Error("something went wrong!");
